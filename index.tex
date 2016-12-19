@@ -49,19 +49,22 @@ Furthermore, we decided to start the writing of this relation at the beginning o
 \subsection{Deadlines}
 On the basis of the considerations made, we set the following internal deadline:
 \begin{enumerate}[label=\textbf{D.\arabic*}]
-\item \label{10December} 10th December 2016: end of the first period. We wanted to have a complete and working version of the stemmer, without considering efficiency matters.
+\item \label{firstDeadline} 10th December 2016: end of the first period. We wanted to have a complete and working version of the stemmer, without considering efficiency matters.
+\item \label{secondDeadline} \textit{date not agreed}: during this period we focused on the evaluation of the system and on the tuning of the efficiency of the system;
+\item \label{thirdDeadline} not yet agreed;
 \end{enumerate}
 \subsection{Role Assignment}
 We agreed in the rotation of our roles, so that each one of us can work with all the different aspects of the project. 
 
-In the first period (until deadlines \ref{10December}), the role was:
+The assignment of roles in the different periods was:
 
 \begin{center}
-    \begin{tabular}{| l | l |}
+    \begin{tabular}{| l | l | l | l | l |}
     \hline
-	Riccardo Bucco & Setting the environment. \\ \hline
-	Giacomo Fornari & Implementing the first version of the stemmer. \\ \hline
-	Alessandro Tezza & Writing the report. \\ \hline
+    & Until \ref{firstDeadline} & Until \ref{secondDeadline} & Until \ref{thirdDeadline} \\ \hline
+	Riccardo Bucco & Setting the environment. & Evaluation/Writing the report. & \\ \hline
+	Giacomo Fornari & Implementation & Evaluation. & \\ \hline
+	Alessandro Tezza & Writing the report. & Efficiency tuning. &  \\ \hline
     \end{tabular}
 \end{center}
 
@@ -69,11 +72,17 @@ In the first period (until deadlines \ref{10December}), the role was:
 \subsection{Adopted Technologies}
 We considered two language for the development of the stemmer: Java and Python. Both of them are largely used, with active communities behind them. Java is the recommended language and it is the language used in Terrier. Python is largely used in numerical computation. For this reason, it is particulary efficient in operations on matrix, useful for our purpose. Other advantages of Python are his simple syntax and his high-level structures, that can result in shorter develop time. However, considering that none of us had experience with Python, this reduced time would be replaced by our study of the language. 
 Generally, Java has better performance, because Python is an interpeted language, as it is told by Python developer themselves\footnote{Comparing Python to Other Languages: https://www.python.org/doc/essays/comparisons/}. Principally for this latter reason and considering that the stemmer had to work with an high amount of documents, we choosed to develop it using Java.
+
 \subsection{Implementation choices}
+The main difficulties in term of implementation of the stemmer was finding a data structure that allows to storage the different graphs used by the algorithm. For our first prototype, we used a simple matrix with every word in the rows and every word in the columns. The result was an highly inefficent data storage, considering that we have to store N*N values, with N the number of words. Furthermore, the resulting matrix was a sparse one, i.e., there was a largest part of the matrix with the value 0.
 
 \section{Coding}
 \subsection{Difficulties}
-
+We had some difficulties in the understanding of the computation of RCO. At the first time, in fact, we didn't understand that the RCO had to be computed on all the words that had a cooccorence: instead, we considered all the words grouped in the same graph using the previous clustering. In fact, the paper state:
+\begin{quotation}
+``Here we consider the word pairs (a, b) for which CO(a, b) > 0.''
+\end{quotation}
+For this reason, our first implementation was wrong: we had then some delay to complete our first prototype before deadline \ref{firstDeadline}, and we started the second period after we planned.
 \section{Evaluation}
 \subsection{Efficiency}
 
