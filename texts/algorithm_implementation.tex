@@ -1,0 +1,9 @@
+\section{Algorithm implementation}
+    In this section we describe the implemention phase of this project, focusing on our implementation choices and on some difficulties we ecountered.
+    \subsection{Adopted Technologies}
+        We considered two language for the development of the stemmer: Java and Python. Both of them are largely used, with active communities behind them. Java is the recommended language and it is the language used in Terrier. Python is largely used in numerical computation. For this reason, it is particulary efficient in operations on matrix, useful for our purpose. Other advantages of Python are his simple syntax and his high-level structures, that can result in shorter develop time. However, considering that none of us had experience with Python, this reduced time would be replaced by our study of the language. Generally, Python has worse performance compared to Java because it is an interpeted language\footnote{Comparing Python to Other Languages: https://www.python.org/doc/essays/comparisons/}. Principally for this latter reason and considering that the stemmer had to work with an high amount of documents, we choosed to develop it using Java.
+    \subsection{Difficulties}
+        We had some difficulties in the understanding of the computation of RCO. At the first time, in fact, we did not understand that RCO had to be computed on all cooccurence words: instead, we considered all the words grouped in the same graph using the previous clustering. In fact, the paper state:
+        \begin{quotation}
+            ``Here we consider the word pairs (a, b) for which CO(a, b)\textgreater 0.''
+        \end{quotation}
