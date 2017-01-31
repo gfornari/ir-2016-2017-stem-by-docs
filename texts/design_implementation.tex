@@ -6,6 +6,8 @@
 
         \footnotetext{\url{https://maven.apache.org/}}
     \subsection{Design choices}
+        We decided to respect a very important principle of software engineering: the design should be specific to the problem that you are facing, but also general enough for future requirements. If in the future someone will decide to use and extend the software that we developed, we want to avoid the need for a redesign.\par
+        Breaking code up into modules helps to organize large code bases and makes programs easier to understand. But above all, modules are helpful for creating libraries that can be imported and used in different applications that share some functionality. We created many standalone modules that can be used and extended even outside the context of this project, as shown in Fig. \ref{stemby-package}.\par
         \begin{figure}
 			\centering
 			\input{./diagrams/stemby_package.tex}
