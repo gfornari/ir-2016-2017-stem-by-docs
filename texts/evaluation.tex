@@ -1,2 +1,26 @@
 \section{Evaluation}
-    \subsection{Efficiency}
+We evaluated three different configuration of Terrier, in order to figure out if our stemmer improves the effectiveness of the overall system. In particular, we evaluated Terrier without stemmer, Terrier with Porter stemmer and Terrier with SNS. We used the following methrics:
+
+\begin{itemize}
+\item MAP (Mean Average Precision), defined as the average on all topics of the AP (Average Precision) calculated on the single topic:
+\begin{equation}
+MAP(R) = \frac{\sum_{t \in T}AP(r_t)}{|T|}
+\end{equation}
+where AP is defined as:
+\begin{equation}
+AP(r_t)=\frac{1}{RB_t}\sum_{k=1}^{N}\widetilde{r_t}[k]\frac{\sum_{h=1}^{k}\widetilde{r_t}[h]}{k}
+\end{equation}
+
+\item R-Prec (Precision at Recall Base), defined as the number of relevant documents retrieved with rank between $[1,RB_t]$ divided by the recall base of the topic;
+
+\item Prec@10, defined as the number of relevant documents retrieved with rank between $[1, 10]$ divided by 10.
+
+\item F-Measure, defined as $1 - (E-Measure)$ where E-Measure is:
+\begin{equation}
+E-Measure=\frac{|D^{*}\cup D|-|D^{*}\cap D|}{|D^{*}\cup D|}
+\end{equation}
+$D^{*}$: relevant documents
+
+$D$: retrieved documents
+
+\end{itemize}
