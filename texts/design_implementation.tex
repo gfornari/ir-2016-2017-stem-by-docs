@@ -46,3 +46,15 @@
         \end{center}
 
         In the future, the \code{com.stemby.ir.algorithms} package can be extended with algorithms regarding indexing, evaluation\dots{} At the moment, it just contains the \code{com.stemby.ir.algorithms.stemming} subpackage, which focuses specifically on \emph{stemming} algorithms. Whithin the \code{stemming} module there is the main part of our work: the \code{com.stemby.ir.algorithms.stemming.sns} package, whose task is to implement the SNS algorithm.\par
+
+    \subsection{Analysis and resolution of the main problems}
+        \subsubsection{Memory management}
+            The first problem we faced was about the \emph{memory consumption}. In fact, if we had proceeded to the implementation of the algorithm following step by step the pseudocode provided, we would have soon realized that to deal with non-trivial collections would take an axcessive amount of memory.\\
+            Example with a real co-occurrence matrix: suppose you have a collection of documents where there are 400,000 terms (as in the case of the Italian collection, which was provided to us); if we had chosen a simple array of integers we would need about \emph{600GB} of memory!\par
+            The improvements we made to get a better memory management are based on two key observations:
+            \begin{itemize}
+                \item Firstly, we realized that arrays of co-occurrences in general are very sparse. The confirmation came after calculating the entire matrix of co-occurrences of the Russian collection: we estimated that about \(149/150\) of the matrix consists of zero elements. The algorithm then calculates an adjacency matrix: this is sparse at least as much as the co-occurrence matrix. Therefore, in general, all the matrices that we use are sparse.
+                \item Secondly, we noticed that both the co-occurrences and the adjacency matrices are symmetrical.
+            \end{itemize}
+        \subsubsection{Efficiency}
+        \subsubsection{Extensibility and usability}
