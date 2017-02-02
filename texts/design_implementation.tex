@@ -7,19 +7,42 @@
         \footnotetext{\url{https://maven.apache.org/}}
     \subsection{Design choices}
         We decided to respect a very important principle of software engineering: the design should be specific to the problem that you are facing, but also general enough for future requirements. If in the future someone will decide to use and extend the software that we developed, we want to avoid the need for a redesign.\par
+
         Breaking code up into modules helps to organize large code bases and makes programs easier to understand. But above all, modules are helpful for creating libraries that can be imported and used in different applications that share some functionality. We created many standalone modules that can be used and extended even outside the context of this project, as shown in Fig. \ref{stemby-package}.\par
+
         \begin{figure}
 			\centering
 			\input{./diagrams/stemby_package.tex}
             \caption{Structure of the package \code{com.stemby}}
 			\label{stemby-package}
 		\end{figure}
+
         We split the code into two main modules:
         \begin{center}
 			\begin{tabular}[H]{| p{0.22\textwidth} | p{0.72\textwidth} |}
                 \hline
-                \code{com.stemby.commons}   & General purpose package that can be used for a variety of tasks. Data structures (at the moment only matrices) are the focus of the \code{util} subpackage. On the other hand, the \code{algorithms} subpackage is a collection of general algorithms on data structures (at the moment only strings, graphs and matrices). \\ \hline
-				\code{com.stemby.ir}        & Package that contains classes and interfaces closely tied to IR. \\ \hline
+                \code{com.stemby.commons}   & General purpose package that can be used for a variety of tasks \\ \hline
+				\code{com.stemby.ir}        & Package that contains classes and interfaces closely tied to IR \\ \hline
 			\end{tabular}
         \end{center}
-    \subsection{Analysis of the main problems}
+
+        The \code{com.stemby.commons} package contains two subpackages:
+        \begin{center}
+			\begin{tabular}[H]{| p{0.36\textwidth} | p{0.58\textwidth} |}
+                \hline
+                \code{com.stemby.commons.util}          & Package which focuses on general data structures \\ \hline
+                \code{com.stemby.commons.algorithms}    & Package that contains a collection of general algorithms on different data structures \\ \hline
+			\end{tabular}
+        \end{center}
+
+        The \code{com.stemby.ir} package is designed to be extended in the future with other classes regarding Information Retrieval in general. Whithin it, we located three packages:
+        \begin{center}
+			\begin{tabular}[H]{| p{0.30\textwidth} | p{0.64\textwidth} |}
+                \hline
+                \code{com.stemby.ir.util}           & Package that contains data structures used specifically in IR \\ \hline
+				\code{com.stemby.ir.io}             & Package that contains classes that support input and output \\ \hline
+                \code{com.stemby.ir.algorithms}     & Package that contains algorithms to be used in IR \\ \hline
+			\end{tabular}
+        \end{center}
+
+        In the future, the \code{com.stemby.ir.algorithms} package can be extended with algorithms regarding indexing, evaluation\dots{} At the moment, it just contains the \code{com.stemby.ir.algorithms.stemming} subpackage, which focuses specifically on \emph{stemming} algorithms. Whithin the \code{stemming} module there is the main part of our work: the \code{com.stemby.ir.algorithms.stemming.sns} package, whose task is to implement the SNS algorithm.\par
