@@ -23,4 +23,19 @@ $D^{*}$: relevant documents
 
 $D$: retrieved documents
 
+\subsection{Strength}
+There are two kinds of errors that can occur during stemming:
+
+\begin{itemize}
+\item under-stemming: the resultant stem is longer compared to the correct stem of the word;
+\item over-stemming: the resultant stem is shorter compared to the correct stem of the word.
+\end{itemize}
+
+Under-stemming and over-stemming errors are related to stemmer stength, i.e., the degree to which a stemmer changes words that it stems. Stemmer strength is discussed in Frakes, Fox, 2003(CITAZIONE) and in Sirsat, Chavan, Mahalle, 2013(CITAZIONE).
+A weak stemmer is one that handles few suffixes and merges only higly related words, and it is more prone to under-stemming errors.
+On the other hand, a strong stemmer handles more suffixes and merges wide variety of forms, but it may be subject to over-stemming errors. Stength of stemmer is important because, like stated by Frakes, it can be predective of recall and precision: on average, a stronger stemmer tends to increase recall and decrease precision.
+
+Frakes and Fox have suggested some measure to evaluate the strength of a stemmer. Between these, they suggested the mean modified Hamming distance. The Hamming distance of two strings of equal length is the number of characters that differs in the same position; for string of unequal length, is the Hamming distance plus the difference in length of the two strings. The mean modified Hamming distance, then, is the average of the modified Hamming distance for each pairs word-stem.
+
+We computed this methric on our stemmer using the Italian, Russian and German corpora with our stemmer and SnowBall stemmer. 
 \end{itemize}
