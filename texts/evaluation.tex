@@ -23,19 +23,49 @@ $D^{*}$: relevant documents
 
 $D$: retrieved documents
 
+\end{itemize}
+
 \subsection{Strength}
 There are two kinds of errors that can occur during stemming:
 
 \begin{itemize}
-\item under-stemming: the resultant stem is longer compared to the correct stem of the word;
-\item over-stemming: the resultant stem is shorter compared to the correct stem of the word.
+\item \textbf{under-stemming}: the resultant stem is longer compared to the correct stem of the word;
+\item \textbf{over-stemming}: the resultant stem is shorter compared to the correct stem of the word.
 \end{itemize}
 
-Under-stemming and over-stemming errors are related to stemmer stength, i.e., the degree to which a stemmer changes words that it stems. Stemmer strength is discussed in Frakes, Fox, 2003(CITAZIONE) and in Sirsat, Chavan, Mahalle, 2013(CITAZIONE).
-A weak stemmer is one that handles few suffixes and merges only higly related words, and it is more prone to under-stemming errors.
-On the other hand, a strong stemmer handles more suffixes and merges wide variety of forms, but it may be subject to over-stemming errors. Stength of stemmer is important because, like stated by Frakes, it can be predective of recall and precision: on average, a stronger stemmer tends to increase recall and decrease precision.
+Under-stemming and over-stemming errors are related to stemmer stength, i.e., the degree to which a stemmer changes words that it stems. Stemmer strength is discussed in Frakes, Fox, 2003\cite{frakes} and in Sirsat, Chavan, Mahalle, 2013\cite{sirsat}.
+A weak stemmer is one that handles few suffixes and merges only highly related words, and it is more prone to under-stemming errors.
+On the other hand, a strong stemmer handles more suffixes and merges wide variety of forms, but it may be subject to over-stemming errors. Strength of stemmer is important because it can be predective of recall and precision: on average, a stronger stemmer tends to increase recall and decrease precision.
+Over-stemming or under-stemming are errors in the calculation of the stem, but this not necessarily means that they are a problem for the stemmer itself: according to the consideration about the relation of these errors to recall and precision, the developer should choose the appropriate stemmer to the context. 
 
-Frakes and Fox have suggested some measure to evaluate the strength of a stemmer. Between these, they suggested the mean modified Hamming distance. The Hamming distance of two strings of equal length is the number of characters that differs in the same position; for string of unequal length, is the Hamming distance plus the difference in length of the two strings. The mean modified Hamming distance, then, is the average of the modified Hamming distance for each pairs word-stem.
+Frakes and Fox have suggested some measure to evaluate the strength of a stemmer. Between these, they suggested the mean modified Hamming distance (mmHd). The Hamming distance of two strings of equal length is the number of characters that differs in the same position; the modified Hamming distance is the Hamming distance plus the difference in lenght of the two strings. The mean modified Hamming distance, then, is the average of the modified Hamming distance for each pairs word-stem.
 
-We computed this methric on our stemmer using the Italian, Russian and German corpora with our stemmer and SnowBall stemmer. 
-\end{itemize}
+We computed this methric using the Italian, Russian and German corpora with our stemmer and SnowBall stemmer. We list the results on Table \ref{tab:strength}.
+
+\begin{center}
+   \begin{tabular}{| l | l | l | l |}
+    \hline
+    & \multicolumn{3}{l|}{\textbf{Mean Modified Hamming Distance}}\\ \hline
+    Stemmer & Italian & Russian & German\\ \hline
+    SNS & 1.75 & 1.88 & 3.31 \\ \hline
+    SnowBall & 1.70 & 1.80 & 1.64\\ \hline    
+    \end{tabular}
+    \captionof{table}{Evaluation of SNS and Snowball strength, using mean modified Hamming distance.}
+    \label{tab:strength}
+\end{center}
+
+Based on these measures, we found that SNS is a little heavier than SnowBall in the Italian and Russian corpora. Instead, SNS is considerably stronger than SnowBall in the German corpus. Furthermore, the mmHd for German with SNS differs greatly from the rest. We deepened this result with an analysis of the stems length. In particular, we found that the average length of the stems does not differ too much from one language to another. Instead, the average length of the terms that will be stem using SNS varies greatly: from a minimum of 8.84 characters for the Italian to a maximum of 12.28 characters for the German. Therefore, SNS removes more characters in German compared to other languages, and this may increase the risk of over-stemming. We list this results on Table \ref{tab:length}.
+
+\begin{center}
+   \begin{tabular}{| l | l | l | l | l |}
+    \hline
+    & Italian & Russian & German\\ \hline
+    Original word length & 8.84 & 10.00 & 12.28\\ \hline
+    Stem length & 3.76 & 4.71 & 3.94\\ \hline   
+    Removed Characters & 5.08 & 5.29 &  8.34\\ \hline
+    \end{tabular}
+    \captionof{table}{Comparison between length of words stemmed by SNS, the length of the respectively stems and the number of removed characters from the original word to the stem. Every measure is an average on the set of words with a stem that differ from the original word.}
+    \label{tab:length}
+\end{center}
+
+This result suggests that SNS may stems better for some languages and worse for others. If this is the case, for complex languages like German, the best solution may be the use of a language-specific stemmer.  
