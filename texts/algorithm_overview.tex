@@ -1,8 +1,10 @@
 \section{Algorithm overview}
 % descrizione sns
-    In this section we briefly highligth the algorithm's logic; for a in-depth description, refer to the original paper.
+    In this section we briefly highligth the algorithm's logic; for a in-depth description, refer to the original paper\cite{sns}.
  
-    The goal of SNS is to group morphologically related words in different clusters, using the frequencies of every word in each documents. The algorithm is divided into three main parts:
+    The goal of SNS is to group morphologically related words in different clusters, using the frequencies of every word in each documents. The stemmer does not make use of language-specific rules, but only information about the occurencies of the word: it is a language independent stemmer.
+    
+The algorithm is divided into three main parts:
 
     \begin{enumerate}
         \item computing co-occurence strength of words pairs, in order to create a graph where co-occuring words (if they meet certain conditions on prefixes and suffixes) are connected;
@@ -10,4 +12,4 @@
         \item grouping words considering the new co-occurence computed.
     \end{enumerate}
 
-    In order to achieve all of these steps, we only need the occurencies of each words on all documents, in order to compute the initial co-occurence strength. The other step of the algorithm are based on computation of these data and operation on each terms. 
+    In order to achieve all of these steps, we only need the occurencies of each words on all documents, used to compute the initial co-occurence strength. The other step of the algorithm are based on computation of these data and operation on each terms. 
