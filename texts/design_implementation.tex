@@ -8,13 +8,13 @@
     \subsection{Design choices}
         We decided to respect a very important principle of software engineering: the design should be specific to the problem that you are facing, but also general enough for future requirements. If in the future someone will decide to use and extend the software that we developed, we want to avoid the need for a redesign.\par
 
-        Breaking code up into modules helps to organize large code bases and makes programs easier to understand. But above all, modules are helpful for creating libraries that can be imported and used in different applications that share some functionality. We created many standalone modules that can be used and extended even outside the context of this project, as shown in Fig. \ref{stemby-package}.\par
+        Breaking code up into modules helps to organize large code bases and makes programs easier to understand. But above all, modules are helpful for creating libraries that can be imported and used in different applications that share some functionality. We created many standalone modules that can be used and extended even outside the context of this project, as shown in Fig. \ref{img:stemby-package}.\par
 
         \begin{figure}
 			\centering
 			\input{./diagrams/stemby_package.tex}
             \caption{Structure of the package \code{com.stemby}}
-			\label{stemby-package}
+			\label{img:stemby-package}
 		\end{figure}
 
         We split the code into two main modules:
@@ -26,35 +26,63 @@
 			\end{tabular}
         \end{center}
 
-        The \code{com.stemby.commons} package contains two subpackages:
-        \begin{center}
-			\begin{tabular}[H]{| p{0.36\textwidth} | p{0.58\textwidth} |}
-                \hline
-                \code{com.stemby.commons.util}          & Package which focuses on general data structures \\ \hline
-                \code{com.stemby.commons.algorithms}    & Package that contains a collection of general algorithms on different data structures \\ \hline
-			\end{tabular}
-        \end{center}
+        Each module is further divided into subpackages. Specifically, we have identified three general functions for each module:
+        \begin{itemize}
+            \item it must have its own specific data structures (\code{util});
+            \item it must have a collection of algorithms to work with (\code{algorithms});
+            \item it must must have classes that support input and output (\code{io}).
+        \end{itemize}
 
-        The \code{com.stemby.ir} package is designed to be extended in the future with other classes regarding Information Retrieval in general. Whithin it, we located three packages:
-        \begin{center}
-			\begin{tabular}[H]{| p{0.30\textwidth} | p{0.64\textwidth} |}
-                \hline
-                \code{com.stemby.ir.util}           & Package that contains data structures used specifically in IR \\ \hline
-				\code{com.stemby.ir.io}             & Package that contains classes that support input and output \\ \hline
-                \code{com.stemby.ir.algorithms}     & Package that contains algorithms to be used in IR \\ \hline
-			\end{tabular}
-        \end{center}
-
-        In the future, the \code{com.stemby.ir.algorithms} package can be extended with algorithms regarding indexing, evaluation\dots{} At the moment, it just contains the \code{com.stemby.ir.algorithms.stemming} subpackage, which focuses specifically on \emph{stemming} algorithms. Whithin the \code{stemming} module there is the main part of our work: the \code{com.stemby.ir.algorithms.stemming.sns} package, whose task is to implement the SNS algorithm.\par
+        The main part of our work is contained in the package \code{com.stemby.ir.algorithms.stemming.sns}, whose task is to implement the SNS algorithm.
 
     \subsection{Analysis and resolution of the main problems}
-        \subsubsection{Memory management}
+        \subsubsection{Memory management}\label{sec:memory-management}
             The first problem we faced was about the \emph{memory consumption}. In fact, if we had proceeded to the implementation of the algorithm following step by step the pseudocode provided, we would have soon realized that to deal with non-trivial collections would take an axcessive amount of memory.\\
-            Example with a real co-occurrence matrix: suppose you have a collection of documents where there are 400,000 terms (as in the case of the Italian collection, which was provided to us); if we had chosen a simple array of integers we would need about \emph{600GB} of memory!\par
+            Example with a real co-occurrence matrix: suppose you have a collection of documents where there are 400,000 terms (as in the case of the Italian collection, which was provided to us); if we had chosen a simple array of integers we would need about \emph{600GB} of memory.\par
+
             The improvements we made to get a better memory management are based on two key observations:
             \begin{itemize}
                 \item Firstly, we realized that arrays of co-occurrences in general are very sparse. The confirmation came after calculating the entire matrix of co-occurrences of the Russian collection: we estimated that about \(149/150\) of the matrix consists of zero elements. The algorithm then calculates an adjacency matrix: this is sparse at least as much as the co-occurrence matrix. Therefore, in general, all the matrices that we use are sparse.
                 \item Secondly, we noticed that both the co-occurrences and the adjacency matrices are symmetrical.
             \end{itemize}
-        \subsubsection{Efficiency}
+            To take advantage of the first observation we decided to use the UJMP library (\emph{Universal Java Matrix Package})\footnotemark{}: it is an open source library that supports sparse matrix computations. However, since this library does not support natively symmetric matrices, we decided to develop an appropriate class, based on the interfaces provided by UJMP. Using these methods, we were able to greatly reduce the memory consumption: for example, the matrix of co-occurrences of the Italian collection requires about 20GB of memory (instead of 600GB).\par
+
+            Later, we realized that unless you have massive computing resources, it is not possible to work with matrices of several GB in memory. We have therefore decided to implement experimentally a class that manages a matrix stored on disk. We didn't opt for existing solutions because they are too general, and thus not very efficient for our purposes (see section \ref{sec:efficiency} for more details).
+
+            \footnotetext{\url{https://ujmp.org/}}
+
+        \subsubsection{Efficiency}\label{sec:efficiency}
+
+            \begin{wrapfigure}{R}{0.25\textwidth}
+                \centering
+                \raisebox{0pt}[\dimexpr\height-0.6\baselineskip\relax]{\input{./diagrams/matrix_memory.tex}}                
+                \caption{\label{img:matrix-memory}Matrix on disk}
+            \end{wrapfigure}
+
+            Compared to many other stemmers, SNS need much computational resources: the complexity of the algorithm is quite high. That is why we worked hard to try to make our software as efficient as possible.\par
+            
+            Firstly, we sped up the way you access the matrix stored on disk. We took advantage of a key observation: the algorithm always accesses elements of the matrix by rows (or by columns). We therefore decided to load into RAM a block of rows and columns at a time, in a transparent way to those using the matrix (see Fig. \ref{img:matrix-memory}). In particular, each time the user decides to use a value of the matrix, it is checked if this element is in one of the blocks in memory: if not, then the columns block and the rows block in which the element is contained are loaded in RAM. We always take into account the symmetry of matrices.\par
+
+            Secondly, the use of UJMP library (see section \ref{sec:memory-management}) allowed us to greatly improve the efficiency of certain operations. In particular, some steps of the algorithm (computation of suffixes of co-occurring terms and computation of the RCO) have to perform operations only on non-zero elements of the matrix. UJMP provides an efficient iterator over them: this allow us to dramatically speed up the execution of our algorithm.
+
         \subsubsection{Extensibility and usability}
+            First of all, we defined a program skeleton of our algorithm, using the \emph{template method pattern}: specifically, the main steps of the algorithm (co-occurrences calculation, creation of the adjacency matrix, graph clustering) can be overridden by subclasses to allow a different implementation while ensuring that the overarching algorithm is still followed. We implemented this pattern using abstract methods (see class \code{com.stemby.ir.algorithms.stemming.sns.AbstractSnsStemmer.java}).\par
+
+            We ensured that our implementation of the algorithm would be easily extended when someone decides to implement some steps differently.
+            In order to achieve this, we used the strategy pattern. It enables the algorithm's behavior to be selected at runtime. We implemented different strategies to use depending on the context in which we want to use our application. Indeed, we had to use different strategies depending on the available resources: when we performed some preliminary testing on our PC, we had to overcome the lack of RAM storing matrices on disk; on the other hand, when we had access to the computing facilities of Department of Mathematics\footnotemark{} we made things easier. Our strategies are available at \code{com.stemby.ir.algorithms.stemming.sns.strategy}.\par
+            
+            Finally, we realized that our stemmer was not usable. Indeed, it had a constructor with many parameters and it was difficult to remember the required order of the parameters. We therefore decided to create the stemmer object using the builder pattern. This results in code that is easy to write and very easy to read and understand. Moreover, this pattern is flexible and it is easy to add more parameters to it in the future. The builder can be found at \code{com.stemby.ir.algorithms.stemming.sns.builder}.
+
+            \footnotetext{\url{http://cf.math.unipd.it/}}
+
+    \subsection{Usage statistics}
+        We executed the application (\code{com.stemby.App.java}) in a calculator with Intel\textsuperscript{\textregistered} Xeon\textsuperscript{\textregistered} Processor X5650 and 256GB of RAM. Summary of computing time and estimation of memory usage:
+        \begin{center}
+			\begin{tabular}[H]{| p{0.20\textwidth} | p{0.30\textwidth} | p{0.30\textwidth} |}
+                \hline
+                Collection  & Computing time    & Estimation of memory usage \\ \hline\hline
+				Russian     & 18 hours          & 13GB                       \\ \hline
+                Italian     & 62 hours          & 23GB                       \\ \hline
+                German      & 250 hours         & 75GB                       \\ \hline % queste sono solo stime!
+			\end{tabular}
+        \end{center}
