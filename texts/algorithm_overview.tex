@@ -12,4 +12,9 @@ The algorithm consists of three main parts:
         \item grouping words considering the new co-occurrence computed.
     \end{enumerate}
 
-    In order to achieve all of these steps, we only need the occurrences of each word on all documents, which are used to compute the initial co-occurrence strength. The others steps of the algorithm are based on the computation of these data and the operations on each terms.
+    In order to achieve all of these steps, we only need the occurrences of each word on all documents, which are used to compute the initial co-occurrence strength. The others steps of the algorithm are based on the computation of these data and the operations on each terms. In particular, the re-calculating of the co-occurrence strength is achieved using this formula:
+    
+    \begin{equation}
+		RCO(a,b) = CO(a,b) + \sum_{c \in N_{a,b}}min(CO(a,c), CO(c, b)) * 0.5    
+    \end{equation}
+but the authors did not specify what is the parameter ``0.5'' and why it is the best choice.
