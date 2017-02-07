@@ -2,9 +2,8 @@
     \subsection{Technologies}
         We chose Java to develop our project. This programming language has many open source libraries and large active communities with millions of users. Moreover, programs written in Java are portable as they are platform-independent.
 
-        In order to make the management of our Java-based project easier, we decided to use Maven\footnotemark{}. This tool provides a uniform build system and some guidelines for best practices development. Furthermore, Maven is exceptionally good at managing external dependencies.
+        In order to make the management of our Java-based project easier, we decided to use Maven\cite{maven}. This tool provides a uniform build system and some guidelines for best practices development. Furthermore, Maven is exceptionally good at managing external dependencies.
 
-        \footnotetext{\url{https://maven.apache.org/}}
     \subsection{Design choices}
         We decided to respect a very important principle of software engineering: the design should be specific to the problem that you are facing, but also general enough for future requirements. We want to avoid the need for a redesign in case someone will want to use and extend our software.
 
@@ -17,7 +16,7 @@
 			\label{img:stemby-package}
 		\end{figure}
 
-        We split the code into two main modules:
+        We split the code into two main packages:
         \begin{center}
 			\begin{tabular}[H]{| p{0.22\textwidth} | p{0.72\textwidth} |}
                 \hline
@@ -26,30 +25,23 @@
 			\end{tabular}
         \end{center}
 
-        Each module is further divided into sub-packages. Specifically, we have identified three general purposes for each module:
-        \begin{itemize}
-            \item it must have its own specific data structures (\code{util});
-            \item it must have a collection of algorithms to work with (\code{algorithms});
-            \item it must have classes that support input and output (\code{io}).
-        \end{itemize}
+		Each package is further divided into sub-packages, organized by purpose: \code{util} provides utilies for data structures, \code{algorithms} contains a collection of algorithms and \code{io} provides support to input and output operations.
 
         The main part of our work is contained in the package \code{com.stemby.ir.algorithms.stemming.sns}, whose function is to implement the SNS algorithm.
 
     \subsection{Analysis and resolution of the main problems}
         \subsubsection{Memory management}\label{sec:memory-management}
-            The first problem we faced was about the \emph{memory consumption}. In fact, if we had proceeded to the implementation of the algorithm following step by step the provided pseudocode, we would have soon realized that dealing with non-trivial collections would have taken an excessive amount of memory. A quick example with a real co-occurrence matrix: suppose we have a collection of documents with 400,000 terms (about the size of our Italian collection); if we had chosen a simple array of integers we would need about \emph{600GB} of memory.
+            The main problem we faced was about the \emph{memory consumption}. In fact, if we had proceeded to the implementation of the algorithm following step by step the provided pseudocode, we would have soon realized that dealing with non-trivial collections would have taken an excessive amount of memory. Suppose to have a collection of documents with 400,000 terms (about the size of the Italian collection); with a simple array of integers (as suggested in the original paper), it would need about \emph{600GB} of memory for the co-occurrence matrix.
 
             The improvements we made to get a better memory management are based on two key observations:
             \begin{itemize}
-                \item Firstly, the arrays of co-occurrences are very sparse in general. The confirmation came after calculating the entire matrix of co-occurrences of the Russian collection: we estimated that about \(149/150\) of the matrix consists of zero elements. After this, the algorithm computes an adjacency matrix: this is sparse at least as much as the co-occurrence matrix is. Then, almost every matrix used is sparse.
-                \item Secondly, both the co-occurrences and the adjacency matrices are symmetrical.
+                \item the arrays of co-occurrences are very sparse in general. The confirmation came after calculating the entire matrix of co-occurrences of the Russian collection: we estimated that about \(149/150\) of the matrix consists of zero elements. After this, the algorithm computes an adjacency matrix: this is sparse as much as the co-occurence matrix. Then, almost every matrix used is sparse;
+                \item both the co-occurrences and the adjacency matrices are symmetrical.
             \end{itemize}
 
-            To take advantage of the first observation we used the open source library UJMP (\emph{Universal Java Matrix Package})\footnotemark{} which supports sparse matrix computations. However, it does not natively support symmetric matrices, then, to compensates for this lack, we had to implement a class based on the interfaces provided by UJMP. Using these methods, we were able to greatly reduce the memory consumption. For example, the matrix of co-occurrences of the Italian collection requires about 20GB of memory (instead of 600GB).
+            To take advantage of the first observation we used the open source library UJMP (\emph{Universal Java Matrix Package})\cite{ujmp} which supports sparse matrix computations. However, it does not natively support symmetric matrices, then, to compensates for this lack, we had to implement a class based on the interfaces provided by UJMP. Using these methods, we were able to greatly reduce the memory consumption. For example, the matrix of co-occurrences of the Italian collection requires about 20GB of memory (instead of 600GB).
 
-            Later, we realized that unless you have massive computing resources, it is not possible to work with matrices of several gigabyte in memory. Without opting for existing solutions due to their being general purpose, and thus with low performance for our case (see section \ref{sec:efficiency} for more details about efficiency), we did several experiments with the aim to store the matrix on disk efficiently.
-
-            \footnotetext{\url{https://ujmp.org/}}
+            Later, we realized that unless you have massive computing resources, it is not possible to work with matrices of several gigabytes in memory. Without opting for existing solutions due to their being general purpose, and thus with low performance for our case (see section \ref{sec:efficiency} for more details about efficiency), we did several experiments with the aim to store the matrix on disk efficiently.
 
         \subsubsection{Efficiency}\label{sec:efficiency}
 
