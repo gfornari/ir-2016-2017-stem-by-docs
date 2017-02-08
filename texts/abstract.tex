@@ -1,4 +1,8 @@
 \begin{abstract}
 % obiettivo progetto
-    We want to describe our work of implementation and evaluation of SNS, a statistical stemmer proposed in Paik, Pal, Parui, 2011\cite{sns}. The goal of this project is to reproduce and to evaluate the stemmer, in order to point out difficulties in the implementation of the algorithm or ambiguity of the paper.
+    In this relation we describe our work of implementation and evaluation of SNS, a statistical stemmer proposed in Paik, Pal, Parui, 2011\cite{sns}. The goal of this project is to reproduce and to evaluate the stemmer, in order to point out difficulties in the implementation of the algorithm or ambiguity of the paper.
+    
+We highlight some problems, in particular regarding the memory management and the efficiency. Starting from the suggested implementation of the paper, were required several optimizations for  make the stemmer usable.
+
+The evaluation shows the benefits arising from the usage of SNS compared to the use of the system without stemmer. However, the use of a language specific stemmer can lead to better results. Furthermore, the evaluation shows how the performance of SNS varies greatly depending on the language of the corpus. In particular, with a German corpus, SNS worsens the effectiveness on retrieval compared to the system without stemmer. We found that the cause of this may be the tendency of SNS to remove many characters from the original words to the respective stems, when applied to German.
 \end{abstract}
