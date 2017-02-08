@@ -41,19 +41,13 @@
 
             To take advantage of the first observation we used the open source library UJMP (\emph{Universal Java Matrix Package})\cite{ujmp} which supports sparse matrix computations. However, it does not natively support symmetric matrices, then, to compensates for this lack, we had to implement a class based on the interfaces provided by UJMP. Using these methods, we were able to greatly reduce the memory consumption. For example, the matrix of co-occurrences of the Italian collection requires about 20GB of memory (instead of 600GB).
 
-            Later, we realized that unless you have massive computing resources, it is not possible to work with matrices of several gigabytes in memory. Without opting for existing solutions due to their being general purpose, and thus with low performance for our case (see section \ref{sec:efficiency} for more details about efficiency), we did several experiments with the aim to store the matrix on disk efficiently.
+            Later, we realized that unless you have massive computing resources, it is not possible to work with matrices of several gigabytes in memory. Without opting for existing solutions due to their being general purpose, and thus with low performance for our case (see section \ref{sec:efficiency} for more details about efficiency), we did several experiments with the aim of store the matrix on disk efficiently.
 
         \subsubsection{Efficiency}\label{sec:efficiency}
 
-            \begin{wrapfigure}{R}{0.25\textwidth}
-                \centering
-                \raisebox{0pt}[\dimexpr\height-0.6\baselineskip\relax]{\input{./diagrams/matrix_memory.tex}}                
-                \caption{\label{img:matrix-memory}Matrix on disk}
-            \end{wrapfigure}
-
             Compared to many other stemmers, SNS needs a lot of computational resources since the complexity of the algorithm is quite high. That is why we worked hard to try to make our software as efficient as possible.
             
-            Firstly, we sped up the way you access the matrix stored on disk. We took advantage of a key observation: the algorithm always accesses elements of the matrix by rows (or by columns). We loaded in RAM a block of rows and columns at a time, in a transparent way to the users (see Fig. \ref{img:matrix-memory}). In particular, each time the user wants to use a value of the matrix, the system checks if the element is in one of the blocks already in memory. If it is not, then the block columns and the block rows in which the element is contained are loaded in RAM. We always take into account the symmetry of the matrices.
+            Firstly, we sped up the way you access the matrix stored on disk. We took advantage of a key observation: the algorithm always accesses elements of the matrix by rows (or by columns). We loaded in RAM a block of rows and columns at a time, in a transparent way to the users. In particular, each time the user wants to use a value of the matrix, the system checks if the element is in one of the blocks already in memory. If it is not, then the block columns and the block rows in which the element is contained are loaded in RAM. We always take into account the symmetry of the matrices.
 
             Secondly, the use of UJMP library (see section \ref{sec:memory-management}) allowed us to greatly improve the efficiency of certain operations. In particular, some steps of the algorithm (such as the computation of suffixes of co-occurring terms and the computation of the RCO) have to perform operations only on non-zero elements of the matrix. UJMP provides an efficient iterator over them, which allows us to dramatically speed up the execution of our algorithm.
 
