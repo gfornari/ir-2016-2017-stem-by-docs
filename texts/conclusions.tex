@@ -1,0 +1,6 @@
+\section{Conclusions}
+The original paper\cite{sns} explains in detail the logic behind SNS. The only ambiguity is the choice of the multiplicative factor in the recalculation of the co-occurences strength: there is no explanation about the choice to fix it at 0.5.
+
+While the logic is clear, the authors did not refer about difficulties on the implementation of the algorithm. The main problem occured during the implementation was the amount of primary memory needed for the co-occurence matrix. As a result of this, efficiency becomes primary: it is mandatory to choose a smart data structure, in order to optimize the memory consumption and the operations on data. We managed this using an external library for sparse matrix, that allows multithreaded operations on data.
+
+Compared to Terrier without stemming, SNS generally improves the effectiveness on retrieval with Italian and Russian. However, Snowball (a language-specific stemmer) worked better in each test. Instead, with a German corpus we had better performance using Terrier without stemmer. SNS stems heavier with German, compared to other languages: this can be cause of over-stemming errors. This result may suggests that SNS works good with some languages, and not with others.  
