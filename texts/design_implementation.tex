@@ -2,7 +2,7 @@
     \subsection{Technologies}
         We chose Java to develop our project. This programming language has many open source libraries and large active communities with millions of users. Moreover, programs written in Java are portable as they are platform-independent.
 
-        In order to make the management of our Java-based project easier, we decided to use Maven\cite{maven}. This tool provides a uniform build system and some guidelines for best practices development. Furthermore, Maven is exceptionally good at managing external dependencies.
+        In order to make the management of our Java-based project easier, we decided to use Maven\footnote{\url{https://maven.apache.org/}}. This tool provides a uniform build system and some guidelines for best practices development. Furthermore, Maven is exceptionally good at managing external dependencies.
 
     \subsection{Design choices}
         We decided to respect a very important principle of software engineering: the design should be specific to the problem that you are facing, but also general enough for future requirements. We want to avoid the need for a redesign in case someone will want to use and extend our software.
@@ -38,16 +38,17 @@
                 \item the arrays of co-occurrences are very sparse in general. The confirmation came after calculating the entire matrix of co-occurrences of the Russian collection: we estimated that about \(149/150\) of the matrix consists of zero elements. After this, the algorithm computes an adjacency matrix: this is sparse as much as the co-occurence matrix. Then, almost every matrix used is sparse;
                 \item both the co-occurrences and the adjacency matrices are symmetrical.
             \end{itemize}
+            
 
-            To take advantage of the first observation we used the open source library UJMP (\emph{Universal Java Matrix Package})\cite{ujmp} which supports sparse matrix computations. However, it does not natively support symmetric matrices, then, to compensates for this lack, we had to implement a class based on the interfaces provided by UJMP. Using these methods, we were able to greatly reduce the memory consumption. For example, the matrix of co-occurrences of the Italian collection requires about 20GB of memory (instead of 600GB).
+            To take advantage of the first observation, we used the open source library UJMP\footnote{\url{https://ujmp.org/}} (\emph{Universal Java Matrix Package}) which supports sparse matrix computations. However, it does not natively support symmetric matrices. Then, to compensates for this lack, we implemented a class based on the interfaces provided by UJMP. Using these methods, we were able to greatly reduce the memory consumption. For example, the matrix of co-occurrences of the Italian collection requires about 20GB of memory (instead of 600GB).
 
-            Later, we realized that unless you have massive computing resources, it is not possible to work with matrices of several gigabytes in memory. Without opting for existing solutions due to their being general purpose, and thus with low performance for our case (see section \ref{sec:efficiency} for more details about efficiency), we did several experiments with the aim of store the matrix on disk efficiently.
+            Later, we realized that unless you have massive computing resources, it is not possible to work with matrices of several gigabytes in memory. We have therefore decided to implement experimentally a class that manages a matrix stored on disk. We didn't opt for existing solutions because they are too general, and thus not very efficient for our purposes (see section \ref{sec:efficiency} for more details).
 
         \subsubsection{Efficiency}\label{sec:efficiency}
 
             Compared to many other stemmers, SNS needs a lot of computational resources since the complexity of the algorithm is quite high. That is why we worked hard to try to make our software as efficient as possible.
             
-            Firstly, we sped up the way you access the matrix stored on disk. We took advantage of a key observation: the algorithm always accesses elements of the matrix by rows (or by columns). We loaded in RAM a block of rows and columns at a time, in a transparent way to the users. In particular, each time the user wants to use a value of the matrix, the system checks if the element is in one of the blocks already in memory. If it is not, then the block columns and the block rows in which the element is contained are loaded in RAM. We always take into account the symmetry of the matrices.
+            Firstly, we sped up the way you access the matrix stored on disk. We took advantage of a key observation: the algorithm always accesses elements of the matrix by rows (or by columns). We loaded in RAM a block of rows and columns at a time, in a transparent way to the users. In particular, each time the user wants to use a value of the matrix, the system checks if the element is in one of the blocks already in memory. If it is not, then the block of columns and the block of rows in which the element is contained are loaded in RAM. We always take into account the symmetry of the matrices.
 
             Secondly, the use of UJMP library (see section \ref{sec:memory-management}) allowed us to greatly improve the efficiency of certain operations. In particular, some steps of the algorithm (such as the computation of suffixes of co-occurring terms and the computation of the RCO) have to perform operations only on non-zero elements of the matrix. UJMP provides an efficient iterator over them, which allows us to dramatically speed up the execution of our algorithm.
 
@@ -55,11 +56,9 @@
             First of all, we defined a program skeleton of our algorithm using the \emph{template method} pattern. Specifically, the main steps of the algorithm (co-occurrences calculation, creation of the adjacency matrix, graph clustering) can be overridden by subclasses to allow a different implementation while ensuring that the overarching algorithm is still followed. We implemented this pattern using abstract methods (see class \code{com.stemby.ir.algorithms.stemming.sns.AbstractSnsStemmer.java}).
 
             We ensured that our implementation of the algorithm would be easily extended when someone decides to implement some steps differently.
-            In order to achieve this, we used the \emph{strategy} pattern. It enables the algorithm's behavior to be selected at runtime. We implemented different strategies to use depending on the context in which we want to use our application. Indeed, we had to use different strategies depending on the available resources: when we performed some preliminary testing on our PC, we had to overcome the lack of RAM storing matrices on disk; on the other hand, when we had access to the computing facilities of the Department of Mathematics\footnotemark{}, we had a lot more RAM available. Our strategies are available at \code{com.stemby.ir.algorithms.stemming.sns.strategy}.
+            In order to achieve this, we used the \emph{strategy} pattern. It enables the algorithm's behavior to be selected at runtime. We implemented different strategies to use depending on the context in which we want to use our application. Indeed, we had to use different strategies depending on the available resources: when we performed some preliminary testing on our PC, we had to overcome the lack of RAM storing matrices on disk; on the other hand, when we had access to the computing facilities of the Department of Mathematics\footnote{\url{http://cf.math.unipd.it/}}, we had a lot more RAM available. Our strategies are available at \code{com.stemby.ir.algorithms.stemming.sns.strategy}.
             
             Finally, we realized that our stemmer was not usable. Indeed, it had a constructor with many parameters and it was difficult to remember the required order of the parameters. We created the stemmer object using the \emph{builder} pattern. This results in code that is easy to write and very easy to read and understand. Moreover, this pattern is flexible and it is easy to add other parameters to it in the future. The builder can be found at \code{com.stemby.ir.algorithms.stemming.sns.builder}.
-
-            \footnotetext{\url{http://cf.math.unipd.it/}}
 
     \subsection{Usage statistics}
         We executed the application (\code{com.stemby.App.java}) in a calculator with Intel\textsuperscript{\textregistered} Xeon\textsuperscript{\textregistered} Processor X5650 and 256GB of RAM. Summary of computing time and estimation of memory usage:
@@ -69,6 +68,6 @@
                 Collection  & Computing time    & Estimation of memory usage \\ \hline\hline
 				Russian     & 18 hours          & 13GB                       \\ \hline
                 Italian     & 62 hours          & 23GB                       \\ \hline
-                German      & 250 hours         & 75GB                       \\ \hline % queste sono solo stime!
+                German      & 250 hours         & 85GB                       \\ \hline % queste sono solo stime!
 			\end{tabular}
         \end{center}

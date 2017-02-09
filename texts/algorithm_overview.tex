@@ -2,19 +2,19 @@
 % descrizione sns
     In this section we briefly highlight the algorithm's logic; for an in-depth description, refer to the original paper\cite{sns}.
  
-    The goal of SNS is to group morphologically related words in different clusters, using the frequencies of every word in each documents. The stemmer does not make use of language-specific rules, but only information about the occurrences of the word: it is a language independent stemmer.
+    The goal of SNS is to group morphologically related words in different clusters, using the frequencies of every word in each document. The stemmer does not make use of language-specific rules, but only information about occurrences of the word: it is language-independent.
     
 The algorithm consists of three main parts:
 
     \begin{enumerate}
-        \item computing co-occurrence strength of words pairs, in order to create a graph where co-occurring words (if they meet certain conditions on prefixes and suffixes) are connected;
+        \item computing co-occurrence strength of words pairs, in order to create a graph where co-occurring words are connected (if they meet certain conditions on prefixes and suffixes);
         \item re-calculating co-occurrence strength considering neighbours in the graph;
         \item grouping words considering the new co-occurrence computed.
     \end{enumerate}
 
-    In order to achieve all of these steps, we only need the occurrences of each word on all documents, which are used to compute the initial co-occurrence strength. The others steps of the algorithm are based on the computation of these data and the operations on each terms. In particular, the re-calculating of the co-occurrence strength is achieved using this formula:
+    In order to achieve all of these steps, we only need occurrences of each word on all documents, which are used to compute the initial co-occurrence strength. The other steps of the algorithm are based on the computation of these data. In particular, the re-calculating of the co-occurrence strength is achieved using this formula:
     
     \begin{equation}
 		RCO(a,b) = CO(a,b) + \sum_{c \in N_{a,b}}min(CO(a,c), CO(c, b)) * 0.5    
     \end{equation}
-but the authors did not specify what is the parameter ``0.5'' and why it is the best choice.
+    The authors did not specify what the parameter ``0.5'' stands for. They did not even explained why it is the best choice.
