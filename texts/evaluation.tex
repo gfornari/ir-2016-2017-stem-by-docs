@@ -1,5 +1,5 @@
 \section{Evaluation}
-We evaluated Terrier\cite{terrier} with three different configurations, in order to figure out if SNS improves the effectiveness of the overall system. In particular, we evaluated Terrier without a stemmer, Terrier with Snowball\cite{snowball} stemmer and Terrier with SNS. In all experiments, we did not remove the stop words and we used BM25 as ranking model. We evaluated using the following metrics:
+We evaluated Terrier\cite{terrier} with three different configurations, in order to figure out if SNS improves the effectiveness of the overall system. In particular, we evaluated Terrier without stemmer, Terrier with Snowball\cite{snowball} stemmer and Terrier with SNS. In all experiments, we did not remove the stop words and we used BM25 as ranking model. We evaluated using the following metrics:
 
 \begin{itemize}
 \item \emph{AP} (Average Precision), defined as:
@@ -9,72 +9,75 @@ AP(r_t)=\frac{1}{RB_t}\sum_{k=1}^{N}\widetilde{r_t}[k]\frac{\sum_{h=1}^{k}\widet
 
 \item \emph{Prec@10}, defined as the number of relevant documents retrieved with rank between $[1, 10]$ divided by 10.
 
-\item \emph{R-Prec} (Precision at Recall Base), defined as the number of relevant documents retrieved with rank between $[1,RB_t]$ divided by the recall base of the topic;
+\item \emph{R-Prec} (Precision at Recall Base), defined as the number of relevant documents retrieved with rank between $[1,|RB_t|]$ divided by the recall base of the topic;
 
-\item \emph{F-Measure}, that combines precision and recall. Considering that the use of a stemmer can affect these metrics, we thought that a resume of both of them can be explanatory of the behaviour of the system. F-Measure is defined as $1 - (E\textnormal{-}Measure)$ where E-Measure is:
-\begin{equation}
-E\textnormal{-}Measure=\frac{|D^{*}\cup D|-|D^{*}\cap D|}{|D^{*}\cup D|}
-\end{equation}
+%\item \emph{F-Measure}, that combines precision and recall. Considering that the use of a stemmer can affect these metrics, we thought that a resume of both of them can be explanatory of the behaviour of the system. F-Measure is defined as $1 - (E\textnormal{-}Measure)$ where E-Measure is:
+%\begin{equation}
+%E\textnormal{-}Measure=\frac{|D^{*}\cup D|-|D^{*}\cap D|}{|D^{*}\cup D|}
+%\end{equation}
 
-$D^{*}$: relevant documents
+%$D^{*}$: relevant documents
 
-$D$: retrieved documents
+%$D$: retrieved documents
 
 \end{itemize}
 
 We measured the average of every measure for each topic. For example, we considered \emph{MAP} (Mean Average Precision), defined as the average of the AP of each topic.
 
-We list the results for Russian in Table \ref{tab:ruEval}, for Italian in Table \ref{tab:itEval} and for German in Table \ref{tab:deEval}. We highlight in bold the best results and in italic the worst results for each metric in every corpus.
+We list the results for Russian in Table \ref{tab:ruEval}, for Italian in Table \ref{tab:itEval} and for German in Table \ref{tab:deEval}. We highlight in bold the best results and in italic the worst results for each metric in every corpus. Furthemore, we list the number of relevant documents retrieved.
 
 \begin{center}
    \begin{tabular}{| l | l | l | l |}
     \hline
-    \multicolumn{4}{|l|}{\textbf{Russian}}\\ \hline
+    \multicolumn{4}{|l|}{\textbf{Russian (151 relevant docs)}}\\ \hline
     & No Stem & Snowball & SNS\\ \hline
     MAP & \textit{0.3012} & \textbf{0.4666} & 0.4245 \\ \hline
     Prec@10 & \textit{0.1821} & \textbf{0.2607}  & 0.2464 \\ \hline
     R-Prec & \textit{0.2646} & \textbf{0.3981} & 0.3768\\ \hline
-    F-Measure & \textbf{0.0386} & 0.0205 & \textit{0.0190}\\ \hline    
+    %F-Measure & \textbf{0.0386} & 0.0205 & \textit{0.0190}\\ \hline
+    N. Relevant Retrieved & \textit{119} & \textbf{143} & \textbf{143}\\ \hline    
     \end{tabular}
     \captionof{table}{Comparison using Terrier with BM25 of SNS, Snowball and no stemming for the Russian corpus.}
     \label{tab:ruEval}
 \end{center}
 
-With Russian (Table \ref{tab:ruEval}), there is a great benefit using a stemmer in MAP, Prec@10 and R-Prec. Instead, F-Measure decrease with Snowball and SNS. Furthermore, Snowball works better than SNS in every metric. 
+With Russian (Table \ref{tab:ruEval}), there is a great benefit using a stemmer in MAP, Prec@10 and R-Prec; however, precision with Snowball is better compared to SNS. Snowball and SNS increase also the number of relevant documents retrieved. 
 
 \begin{center}
    \begin{tabular}{| l | l | l | l |}
     \hline
-    \multicolumn{4}{|l|}{\textbf{Italian}}\\ \hline
+    \multicolumn{4}{|l|}{\textbf{Italian (809 relevant docs)}}\\ \hline
     & No Stem & Snowball & SNS\\ \hline
     MAP & 0.3482 & \textbf{0.3887} & \textit{0.3059} \\ \hline
     Prec@10 & \textit{0.2529} & \textbf{0.2824} & 0.2549 \\ \hline
     R-Prec & \textbf{0.3365} & 0.3616 & \textit{0.3063}\\ \hline
-    F-Measure & \textbf{0.0331} & 0.0308 & \textit{0.0267} \\ \hline    
+    %F-Measure & \textbf{0.0331} & 0.0308 & \textit{0.0267} \\ \hline    
+	N. Relevant Retrieved & 723 & \textbf{746} & \textit{709}\\ \hline        
     \end{tabular}
     \captionof{table}{Comparison using Terrier with BM25 of SNS, Snowball and no stemming for the Italian corpus.}
     \label{tab:itEval}
 \end{center}
 
-Using the Italian corpus (Table \ref{tab:itEval}), the situation is more complex. MAP increases using Snowball, but decreases using SNS. Prec@10 increases using a stemmer, in particular using Snowball. Lastly, F-Measure decreases a bit using Snowball, but there is a great drop with SNS.
+Using the Italian corpus (Table \ref{tab:itEval}), the situation is more complex. MAP increases using Snowball, but decreases using SNS. Prec@10 increases using a stemmer, in particular using Snowball. R-Prec decreases using both Snowball and SNS. Lastly, the number of relevant documents retrieved increases using Snowball, but decreases using SNS.
 
 \begin{center}
    \begin{tabular}{| l | l | l | l |}
     \hline
-    \multicolumn{4}{|l|}{\textbf{German}}\\ \hline
+    \multicolumn{4}{|l|}{\textbf{German (1825 relevant docs)}}\\ \hline
     & No Stem & Snowball & SNS\\ \hline
     MAP & 0.1459 & \textbf{0.1667} & \textit{0.1257} \\ \hline
     Prec@10 & 0.2304 & \textbf{0.2679} & \textit{0.1893} \\ \hline
     R-Prec & 0.1680 & \textbf{0.1934} & \textit{0.1502}\\ \hline
-    F-Measure & 0.0318 & \textbf{0.0326} & \textit{0.0239}\\ \hline    
+    %F-Measure & 0.0318 & \textbf{0.0326} & \textit{0.0239}\\ \hline    
+	N. Relevant Retrieved & \textit{534} & \textbf{601} & 538\\ \hline        
     \end{tabular}
     \captionof{table}{Comparison using Terrier with BM25 of SNS, Snowball and no stemming for the German corpus.}
     \label{tab:deEval}
 \end{center}
 
-With the German corpus (Table \ref{tab:deEval}), SNS works badly. While Snowball improves all the metrics, SNS worsens every one of them.
+With the German corpus (Table \ref{tab:deEval}), SNS works badly. While Snowball improves all the metrics, SNS worsens every one of them. Only the number of relevant documents retrieved increases a little using SNS, but Snowball performs even better.
 
-The better performance of Snowball compared to SNS is not surprising, considering that SNS is designed to be language independent while Snowball has ad-hoc version for each tested language. However, the results show how SNS does not improve the effectiveness of the retrieval with every corpus. SNS can be a good choice with a Russian corpus, or, depending on the context, with the Italian: considering the drop in F-Measure and MAP, but the increase of Prec@10, it can work well in a context where it is primary the retrieve of relevant documents in the first positions. Instead, the results show how SNS worsens the effectiveness of the system with a German corpus. 
+The better performance of Snowball compared to SNS is not surprising, considering that SNS is designed to be language independent while Snowball has ad-hoc version for each tested language. However, the results show how SNS does not improve the effectiveness of the retrieval with every corpus. SNS can be a good choice with a Russian corpus, or, depending on the context, with the Italian: considering the drop in MAP, but the increase of Prec@10, it can work well in a context where it is primary the retrieval of relevant documents in top positions. Instead, the results show how SNS worsens the effectiveness of the system with a German corpus. 
 
 \subsection{Strength}
 The bad performance with the German corpus may be caused by the complexity of the language; a statistical stemmer can have more difficulties to manage it in a general and independent way. For this reason, we chose to further analyse the stems produced in order to find some clues in this direction.
@@ -91,7 +94,7 @@ predictive of recall and precision: on average, a stronger stemmer tends to incr
 
 Frakes and Fox have proposed some measures to evaluate the strength of a stemmer. Between these, they suggested the \emph{mean modified Hamming distance} (mmHd). The Hamming distance of two strings of equal length is the number of characters that differs in the same position; the modified Hamming distance is the Hamming distance plus the difference in length of the two strings. The mean modified Hamming distance, then, is the average of the modified Hamming distance for each pairs word-stem.
 
-We computed this metric using the Italian, Russian and German corpora with our stemmer and Snowball stemmer. We list the results on Table \ref{tab:strength}.
+We computed this metric using the Italian, Russian and German corpora with SNS and Snowball stemmers. We list the results on Table \ref{tab:strength}.
 
 \begin{center}
    \begin{tabular}{| l | l | l | l |}
