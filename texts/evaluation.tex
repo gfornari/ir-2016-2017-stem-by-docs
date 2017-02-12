@@ -50,7 +50,7 @@ With Russian (Table \ref{tab:ruEval}), there is a great benefit using a stemmer 
     & No Stem & Snowball & SNS\\ \hline
     MAP & 0.3482 & \textbf{0.3887} & \textit{0.3059} \\ \hline
     Prec@10 & \textit{0.2529} & \textbf{0.2824} & 0.2549 \\ \hline
-    R-Prec & \textbf{0.3365} & 0.3616 & \textit{0.3063}\\ \hline
+    R-Prec & 0.3365 & \textbf{0.3616} & \textit{0.3063}\\ \hline
     %F-Measure & \textbf{0.0331} & 0.0308 & \textit{0.0267} \\ \hline    
 	N. Relevant Retrieved & 723 & \textbf{746} & \textit{709}\\ \hline        
     \end{tabular}
@@ -58,7 +58,7 @@ With Russian (Table \ref{tab:ruEval}), there is a great benefit using a stemmer 
     \label{tab:itEval}
 \end{center}
 
-Using the Italian corpus (Table \ref{tab:itEval}), the situation is more complex. MAP increases using Snowball, but decreases using SNS. Prec@10 increases using a stemmer, in particular using Snowball. R-Prec decreases using both Snowball and SNS. Lastly, the number of relevant documents retrieved increases using Snowball, but decreases using SNS.
+Using the Italian corpus (Table \ref{tab:itEval}), the situation is more complex. MAP, R-Prec and recall increase using Snowball, but decrease using SNS. Prec@10 increases using a stemmer, in particular using Snowball. 
 
 \begin{center}
    \begin{tabular}{| l | l | l | l |}
