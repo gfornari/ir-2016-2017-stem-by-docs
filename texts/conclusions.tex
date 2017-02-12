@@ -1,5 +1,5 @@
 \section{Conclusions}
-The original paper\cite{sns} explains in detail the logic behind SNS. The only ambiguity is the choice of the multiplicative factor in the recalculation of the co-occurences strength: there is no explanation about the choice to fix it at 0.5.
+The original paper\cite{sns} explains in detail the logic behind SNS. There are two ambiguity: the choice of the stems from the clusters and the choice of the multiplicative factor in the recalculation of the co-occurences strength.
 
 While the logic is clear, the authors did not refer about difficulties on the implementation of the algorithm. The main problem occured during the implementation was the amount of primary memory needed for the co-occurence matrix. As a result of this, efficiency becomes primary: it is mandatory to choose a smart data structure, in order to optimize the memory consumption and the operations on data. We managed this using an external library for sparse matrix, that allows multithreaded operations on data.
 
